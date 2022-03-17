@@ -1,0 +1,15 @@
+Bootstrap: docker
+From: pytorch/pytorch:1.10.0-cuda11.3-cudnn8-devel
+
+%post
+  DEBIAN_FRONTEND=noninteractive apt update -y
+  DEBIAN_FRONTEND=noninteractive apt upgrade -y
+  DEBIAN_FRONTEND=noninteractive apt install python-pip git libpoppler-cpp-dev cmake libpoppler-glib-dev -y
+  DEBIAN_FRONTEND=noninteractive apt-get install ffmpeg libsm6 libxext6  -y
+  DEBIAN_FRONTEND=noninteractive apt-get install tesseract-ocr tesseract-ocr-deu  tesseract-ocr-eng -y
+  cd /
+  pip install python-poppler
+  pip install layoutparser
+  pip install "git+https://github.com/facebookresearch/detectron2.git@v0.5#egg=detectron2"
+  pip install pytesseract
+
