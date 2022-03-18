@@ -1,4 +1,10 @@
+pandas
+jupyter
 python-poppler
 layoutparser
 layoutparser[layoutmodels]
 layoutparser[ocr]
+pytesseract
+matplotlib
+git+https://github.com/facebookresearch/detectron2.git@v0.5#egg=detectron2
+
