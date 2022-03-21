@@ -1,7 +1,4 @@
 import sys
-
-from phycor.reader import Transcriber
-
 sys.path.append('.')
 
 import argparse
@@ -11,6 +8,7 @@ from itertools import islice
 from phycor.loader import Loader
 from phycor.layout import Parser
 from phycor.writer import Writer
+from phycor.reader import Transcriber
 
 import logging
 
