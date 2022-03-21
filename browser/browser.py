@@ -1,10 +1,10 @@
 from functools import lru_cache
+from urllib.parse import unquote
 
 import pandas as pd
-from flask import Flask, render_template, send_file, jsonify, abort
-from markupsafe import escape
-from urllib.parse import unquote
+from flask import Flask, send_file
 from flask_cors import CORS
+from markupsafe import escape
 
 app = Flask(__name__)
 CORS(app)
@@ -42,24 +42,36 @@ def page_image_route(model, book_id, page_num):
     return send_file(page_image_jpg(model, page_image_filename))
 
 
+@app.route("/<model>/book/<book_id>/page/<page_num>.json")
+def page_info_route(model, book_id, page_num):
+    book_filename = unquote(book_id)
+    df = pd.read_csv(page_elements_csv(model))
+    selected = df[(df.pdf_filename == book_filename) & (df.page_num == int(page_num))]
+    return {'element_count': selected.shape[0]}
+
+
 @app.route("/<model>/book/<book_id>/page/<page_num>/element/<element_num>.jpg")
 def element_image_route(model, book_id, page_num, element_num):
     book_filename = unquote(book_id)
     df = pd.read_csv(page_elements_csv(model))
-    el_image_filename = df[(df.pdf_filename == book_filename) &
-                           (df.page_num == int(page_num)) &
-                           (df.el_num == int(element_num))].el_image.iloc[0]
-    return send_file(el_image_jpg(model, el_image_filename))
+    selected = df[(df.pdf_filename == book_filename) &
+                  (df.page_num == int(page_num)) &
+                  (df.el_num == int(element_num))].el_image
+    if selected.shape[0] == 0:
+        return 'page not found', 404
+    return send_file(el_image_jpg(model, selected.iloc[0]))
 
 
 @app.route("/<model>/book/<book_id>/page/<page_num>/element_ocr/<element_num>.txt")
 def element_ocr_route(model, book_id, page_num, element_num):
     book_filename = unquote(book_id)
     df = pd.read_csv(page_elements_csv(model))
-    el_txt_filename = df[(df.pdf_filename == book_filename) &
-                         (df.page_num == int(page_num)) &
-                         (df.el_num == int(element_num))].el_txt.iloc[0]
-    return send_file(el_ocr_txt(model, el_txt_filename))
+    selected = df[(df.pdf_filename == book_filename) &
+                  (df.page_num == int(page_num)) &
+                  (df.el_num == int(element_num))].el_txt
+    if selected.shape[0] == 0:
+        return 'page not found', 404
+    return send_file(el_ocr_txt(model, selected.iloc[0]))
 
 
 def page_elements_csv(model):
