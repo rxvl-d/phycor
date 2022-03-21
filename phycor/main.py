@@ -22,7 +22,6 @@ def parse_args():
     #  --data_dir ../data/ --model_type fast --output_path ../data/fast_parse/ --n_pages 10
     parser.add_argument("-v", "--verbose", action="store_true", help="verbose output", default=False)
     parser.add_argument("-i", "--data_dir", help="Data Dir")
-    parser.add_argument("-o", "--output_path", help="Output Dir")
     parser.add_argument("-m", "--model_type", help="Model Type", choices=['fast', 'efficient'])
     parser.add_argument("-n", "--n_pages", help="Num. Pages", type=int, required=False, default=None)
     args = parser.parse_args()
@@ -31,7 +30,8 @@ def parse_args():
 
 def main():
     args = parse_args()
-    run(args.data_dir, args.output_path, args.model_type, args.n_pages, args.verbose)
+    output_path = args.data_dir + '/' + args.model_type + '/'
+    run(args.data_dir, output_path, args.model_type, args.n_pages, args.verbose)
 
 
 def run(data_dir, output_path, model_type, n_pages, verbose):
