@@ -64,7 +64,7 @@ def element_ocr_route(model, book_id, page_num, element_num):
     df = pd.read_csv(page_elements_csv(model))
     selected = df[(df.pdf_filename == book_filename) &
                   (df.page_num == int(page_num)) &
-                  (df.el_num == int(element_num))].el_txt
+                  (df.el_num == int(element_num))].el_text
     if selected.shape[0] == 0:
         return 'element not found', 404
     return send_file(el_ocr_txt(model, selected.iloc[0]))

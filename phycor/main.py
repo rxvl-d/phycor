@@ -1,4 +1,7 @@
 import sys
+
+from phycor.reader import Transcriber
+
 sys.path.append('.')
 
 import argparse
@@ -38,12 +41,14 @@ def run(data_dir, output_path, model_type, n_pages, verbose):
     loader = Loader(data_dir)
     parser = Parser(model_type)
     writer = Writer(output_path)
+    transcriber = Transcriber()
     page_images = loader.page_images(verbose)
     optionally_limited = islice(page_images, n_pages) if n_pages else page_images
     for filename, page_index, image in optionally_limited:
         elements = parser.get_text_areas(image)
         for el_idx, (crop, el_type, score) in enumerate(elements):
-            writer.write(filename, page_index, el_idx, el_type, score, Image.fromarray(image), crop)
+            ocred_text = transcriber.transcribe(crop)
+            writer.write(filename, page_index, el_idx, el_type, score, Image.fromarray(image), crop, ocred_text)
     writer.finalize()
 
 
