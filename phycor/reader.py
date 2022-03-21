@@ -4,4 +4,4 @@ from pytesseract import pytesseract
 
 class Transcriber:
     def transcribe(self, image: Image):
-        return pytesseract.image_to_string(image)
+        return pytesseract.image_to_string(image, lang='deu')
