@@ -35,7 +35,6 @@ def book_route(model, book_id):
 def page_image_route(model, book_id, page_num):
     book_filename = unquote(book_id)
     df = pd.read_csv(page_elements_csv(model))
-    print(book_filename, page_num)
     selected = df[(df.pdf_filename == book_filename) & (df.page_num == int(page_num))]
     if selected.shape[0] == 0:
         return 'page not found', 404
@@ -49,7 +48,7 @@ def element_image_route(model, book_id, page_num, element_num):
     df = pd.read_csv(page_elements_csv(model))
     el_image_filename = df[(df.pdf_filename == book_filename) &
                            (df.page_num == int(page_num)) &
-                           (df.el_num == element_num)].el_image.iloc[0]
+                           (df.el_num == int(element_num))].el_image.iloc[0]
     return send_file(el_image_jpg(model, el_image_filename))
 
 
@@ -58,8 +57,8 @@ def element_ocr_route(model, book_id, page_num, element_num):
     book_filename = unquote(book_id)
     df = pd.read_csv(page_elements_csv(model))
     el_txt_filename = df[(df.pdf_filename == book_filename) &
-                         (df.page_num == page_num) &
-                         (df.el_num == element_num)].el_txt.iloc[0]
+                         (df.page_num == int(page_num)) &
+                         (df.el_num == int(element_num))].el_txt.iloc[0]
     return send_file(el_ocr_txt(model, el_txt_filename))
 
 
