@@ -64,10 +64,13 @@ def element_ocr_route(model, book_id, page_num, element_num):
     df = pd.read_csv(page_elements_csv(model))
     selected = df[(df.pdf_filename == book_filename) &
                   (df.page_num == int(page_num)) &
-                  (df.el_num == int(element_num))].el_text
+                  (df.el_num == int(element_num))]
     if selected.shape[0] == 0:
         return 'element not found', 404
-    return send_file(el_ocr_txt(model, selected.iloc[0]))
+    return {
+        'tesseract': el_ocr_txt_tesseract(model, selected.el_text_tes.iloc[0]),
+        'doc': el_ocr_txt_doc(model, selected.el_text_doc.iloc[0]),
+    }
 
 
 def page_elements_csv(model):
@@ -82,9 +85,13 @@ def el_image_jpg(model, el_image_filename):
     return data_dir + escape(model) + '/crop_image/' + el_image_filename
 
 
-def el_ocr_txt(model, el_ocr_filename):
-    return data_dir + escape(model) + '/crop_text/' + el_ocr_filename
+def el_ocr_txt_tesseract(model, el_ocr_filename):
+    with open(data_dir + escape(model) + '/crop_text_tes/' + el_ocr_filename) as f:
+        return f.read()
 
+def el_ocr_txt_doc(model, el_ocr_filename):
+    with open(data_dir + escape(model) + '/crop_text_doc/' + el_ocr_filename) as f:
+        return f.read()
 
 @lru_cache()
 def get_df(model):

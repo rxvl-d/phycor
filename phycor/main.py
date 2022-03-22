@@ -42,11 +42,12 @@ def run(data_dir, output_path, model_type, n_pages, verbose):
     transcriber = Transcriber()
     page_images = loader.page_images(verbose)
     optionally_limited = islice(page_images, n_pages) if n_pages else page_images
-    for filename, page_index, image in optionally_limited:
+    for filename, page_index, page, image, page_text in optionally_limited:
         elements = parser.get_text_areas(image)
-        for el_idx, (crop, el_type, score) in enumerate(elements):
-            ocred_text = transcriber.transcribe(crop)
-            writer.write(filename, page_index, el_idx, el_type, score, Image.fromarray(image), crop, ocred_text)
+        for el_idx, (bb, crop, el_type, score) in enumerate(elements):
+            ocred_text_tesseract = transcriber.transcribe(crop)
+            ocred_text_doc = loader.get_doc_text(page, bb)
+            writer.write(filename, page_index, el_idx, el_type, score, Image.fromarray(image), crop, ocred_text_tesseract, ocred_text_doc)
     writer.finalize()
 
 

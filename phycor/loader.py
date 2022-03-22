@@ -1,4 +1,6 @@
 from poppler import load_from_file, PageRenderer
+from poppler.rectangle import Rectangle
+from poppler.page import Page
 from glob import glob
 import numpy as np
 from tqdm import tqdm
@@ -19,12 +21,18 @@ class Loader:
     def page_images(self, verbose):
         for filename, file in self.files(verbose):
             for page_index in self.pages_progress(filename, file.pages, verbose):
-                poppler_image = self.renderer.render_page(file.create_page(page_index))
+                page = file.create_page(page_index)
+                page_text = page.text()
+                poppler_image = self.renderer.render_page(page)
                 image = poppler_to_rgb(poppler_image)
-                yield filename.split('/')[-1], page_index, image
+                yield filename.split('/')[-1], page_index, page, image, page_text
 
     def pages_progress(self, filename, page_count, verbose):
         return tqdm(range(page_count), total=page_count, desc=filename) if verbose else range(page_count)
+
+    def get_doc_text(self, page: Page, bb: tuple):
+        """bb expected to be x,y,width,height"""
+        return page.text(Rectangle(*bb))
 
 
 def poppler_to_rgb(image):

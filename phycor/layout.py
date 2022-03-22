@@ -16,6 +16,7 @@ class Parser:
 
     def get_text_areas(self, image: np.ndarray):
         """return list of (PIL.Image, ElType, score: float)"""
-        return [(Image.fromarray(image).crop(el.block.coordinates),
+        return [((el.block.coordinates[0], el.block.coordinates[1], el.block.width, el.block.height),
+                 Image.fromarray(image).crop(el.block.coordinates),
                  self.type_map[el.type],
                  el.score) for el in self.model.detect(image)]
