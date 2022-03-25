@@ -1,3 +1,4 @@
+tqdm
 pandas
 jupyter
 python-poppler
@@ -7,4 +8,6 @@ layoutparser[ocr]
 pytesseract
 matplotlib
 git+https://github.com/facebookresearch/detectron2.git@v0.5#egg=detectron2
+beautifulsoup4
+Pillow
 

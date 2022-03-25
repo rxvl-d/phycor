@@ -2,3 +2,6 @@ results
 data
 __pycache__
 .idea
+.envrc
+.trnskrbs
+.ipynb_checkpoints
